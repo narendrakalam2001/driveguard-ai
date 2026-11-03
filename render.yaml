@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: driveguard-ai-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: standard
+    healthCheckPath: /health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: HUGGINGFACE_TOKEN
+        sync: false
+      - key: HF_MODEL_REPO
+        sync: false
+      - key: GEMINI_MODEL_NAME
+        value: gemini-3.1-flash-lite
+      - key: DRIVEGUARD_API_KEY
+        generateValue: true
+      - key: EVIDENCE_FRAMES_DIR
+        value: /app/violation_logs/evidence   # same persistent disk as the database
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: API_PORT
+        value: 8000
+      - key: LOG_LEVEL
+        value: INFO
+      - key: DETECTION_CONF_THRESHOLD
+        value: "0.4"
+      - key: PLATE_CONFIDENCE_THRESHOLD
+        value: "0.3"
+    disk:
+      name: driveguard-data
+      mountPath: /app/violation_logs
+      sizeGB: 5
+
+  - type: web
+    name: driveguard-ai-dashboard
+    runtime: docker
+    dockerfilePath: ./Dockerfile.dashboard
+    plan: starter
+    envVars:
+      - key: DRIVEGUARD_API_KEY
+        fromService:
+          type: web
+          name: driveguard-ai-api
+          envVarKey: DRIVEGUARD_API_KEY
+      - key: DRIVEGUARD_API_URL
+        fromService:
+          type: web
+          name: driveguard-ai-api
+          property: hostport

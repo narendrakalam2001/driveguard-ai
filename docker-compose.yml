@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    image: driveguard-ai-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./violation_logs:/app/violation_logs
+      - ./evidence_frames:/app/evidence_frames
+      - ./chromadb_store:/app/chromadb_store
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  dashboard:
+    build: .
+    image: driveguard-ai-api
+    command: ["python", "-m", "streamlit", "run", "frontend/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    ports:
+      - "8501:8501"
+    environment:
+      - DRIVEGUARD_API_URL=http://api:8000
+    depends_on:
+      - api

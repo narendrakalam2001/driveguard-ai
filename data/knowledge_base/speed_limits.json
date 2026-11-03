@@ -1,0 +1,21 @@
+{
+  "_disclaimer": "Representative zone-class speed limits used by DriveGuard AI's own configurable zones (src/config.py:SPEED_ZONES). Actual posted limits vary by exact stretch and state notification under Section 112 of the MV Act — always defer to on-ground signage.",
+  "default_zone_limits_kmph": {
+    "School Zone": 25,
+    "Residential": 40,
+    "City Road": 60,
+    "Highway": 100
+  },
+  "state_highway_notes": {
+    "Maharashtra": "Expressways (e.g. Mumbai-Pune) permit up to 100 kmph for LMVs; state highways typically 80 kmph.",
+    "Delhi": "Ring Road and arterial roads generally capped at 60-70 kmph; residential/school zones as low as 25 kmph.",
+    "Karnataka": "Bengaluru city roads generally 50-60 kmph; NICE Road and outer ring road corridors up to 70-80 kmph.",
+    "Tamil Nadu": "Chennai city arterial roads 50-60 kmph; national highways within state up to 100 kmph for LMVs."
+  },
+  "vehicle_class_modifiers": {
+    "note": "Heavy goods and passenger vehicles (trucks, buses) are typically subject to lower class-specific limits than light motor vehicles on the same stretch, per Rule 3 of the Central Motor Vehicles Rules.",
+    "truck_highway_typical_kmph": 80,
+    "bus_highway_typical_kmph": 80,
+    "two_wheeler_highway_typical_kmph": 80
+  }
+}

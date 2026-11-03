@@ -1,0 +1,62 @@
+﻿image,box,det_conf,x1,y1,x2,y2,crop_file,ocr_text,ocr_conf,true_text,label_note
+voc0000_Datacluster_number_plates_1_.jpg,0,0.712,15,235,409,417,voc0000_Datacluster_number_plates_1__box0.jpg,NA0074,0.502,-,fragment: only the last digits (0074) are inside the crop
+voc0000_Datacluster_number_plates_1_.jpg,1,0.593,127,385,366,529,voc0000_Datacluster_number_plates_1__box1.jpg,"AN0074AP29,",0.777,AP29 AN 0074,
+voc0001_Datacluster_number_plates_101_.jpg,0,0.657,217,304,389,364,voc0001_Datacluster_number_plates_101__box0.jpg,02248MGMP4PE,0.678,MP42 MG 2246,
+voc0001_Datacluster_number_plates_101_.jpg,1,0.639,14,950,188,1023,voc0001_Datacluster_number_plates_101__box1.jpg,,0,-,
+voc0002_Datacluster_number_plates_11_.jpg,0,0.809,113,433,522,620,voc0002_Datacluster_number_plates_11__box0.jpg,2117+JHOSAW,0.807,JH05AW 2117,
+voc0003_Datacluster_number_plates_16_.jpg,0,0.941,336,436,611,510,voc0003_Datacluster_number_plates_16__box0.jpg,INDKLOZBML659,0.86,KL02BM4659,
+voc0004_Datacluster_number_plates_18_.jpg,0,0.906,245,259,461,343,voc0004_Datacluster_number_plates_18__box0.jpg,TN-23-L-4547],0.314,TN-23-L-4547,
+voc0005_Datacluster_number_plates_22_.jpg,0,0.848,222,344,433,415,voc0005_Datacluster_number_plates_22__box0.jpg,TN-18-D-1866,0.971,TN-18-D-1866,
+voc0006_Datacluster_number_plates_36_.jpg,0,0.885,231,287,557,467,voc0006_Datacluster_number_plates_36__box0.jpg,UPB8F2859,0.672,UP38F 2859,label OK but crop cuts off the bottom line; same plate as voc0012 box0 (duplicate image)
+voc0006_Datacluster_number_plates_36_.jpg,1,0.457,1,0,261,109,voc0006_Datacluster_number_plates_36__box1.jpg,,0,-,
+voc0007_Datacluster_number_plates_38_.jpg,0,0.886,238,347,491,406,voc0007_Datacluster_number_plates_38__box0.jpg,"DLE8SBT*64,38",0.281,DL 8SBT 6438,
+voc0008_Datacluster_number_plates_4_.jpg,0,0.887,202,673,309,710,voc0008_Datacluster_number_plates_4__box0.jpg,SIAAREEALEZR091.7267],0.17,BR09V 7267,
+voc0009_Datacluster_number_plates_49_.jpg,0,0.898,274,500,475,568,voc0009_Datacluster_number_plates_49__box0.jpg,MH:20.BC.5122,0.447,MH. 20.BC. 5122,
+voc0009_Datacluster_number_plates_49_.jpg,1,0.51,159,365,253,397,voc0009_Datacluster_number_plates_49__box1.jpg,C9945693702C.9481059474,0.632,-,
+voc0010_Datacluster_number_plates_5_.jpg,0,0.727,124,456,645,584,voc0010_Datacluster_number_plates_5__box0.jpg,HERO4388,0.783,-,fragment: bottom line only (4388); same plate as box1
+voc0010_Datacluster_number_plates_5_.jpg,1,0.547,110,332,664,452,voc0010_Datacluster_number_plates_5__box1.jpg,UP6AW,0.708,-,fragment: top line only (UP64W); same plate as box0
+voc0011_Datacluster_number_plates_53_.jpg,0,0.932,454,742,631,796,voc0011_Datacluster_number_plates_53__box0.jpg,KA38M1674,0.555,KA38M1674,
+voc0011_Datacluster_number_plates_53_.jpg,1,0.718,72,723,295,787,voc0011_Datacluster_number_plates_53__box1.jpg,JO,0.068,-,
+voc0012_Datacluster_number_plates_55_.jpg,0,0.776,244,370,594,564,voc0012_Datacluster_number_plates_55__box0.jpg,UP38F2859,0.695,UP38F2859,
+voc0013_Datacluster_number_plates_62_.jpg,0,0.49,610,276,768,340,voc0013_Datacluster_number_plates_62__box0.jpg,,0,-,
+voc0013_Datacluster_number_plates_62_.jpg,1,0.418,191,195,329,227,voc0013_Datacluster_number_plates_62__box1.jpg,,0,-,
+voc0014_Datacluster_number_plates_64_.jpg,0,0.831,225,430,444,589,voc0014_Datacluster_number_plates_64__box0.jpg,R60Z47703,0.621,KL 04 AL 7703,
+voc0015_Datacluster_number_plates_66_.jpg,0,0.694,182,430,533,663,voc0015_Datacluster_number_plates_66__box0.jpg,MPIIII,0.561,MP 09 QP 1111,
+voc0016_Datacluster_number_plates_70_.jpg,0,0.822,229,345,608,519,voc0016_Datacluster_number_plates_70__box0.jpg,BROZAB'1993,0.494,BR07AB 1993,
+voc0016_Datacluster_number_plates_70_.jpg,1,0.704,242,456,615,559,voc0016_Datacluster_number_plates_70__box1.jpg,LIY1993,0.245,-,fragment: digits only (1993); box0 is the full plate
+voc0017_Datacluster_number_plates_73_.jpg,0,0.822,230,327,506,513,voc0017_Datacluster_number_plates_73__box0.jpg,5PO7OKB8260,0.524,MP.07 HB 8260,label OK but crop cuts off part of the last digits
+voc0018_Datacluster_number_plates_79_.jpg,0,0.95,318,373,532,452,voc0018_Datacluster_number_plates_79__box0.jpg,SKOPC0456,0.387,SK01PC0456,
+voc0019_Datacluster_number_plates_80_.jpg,0,0.877,164,364,477,512,voc0019_Datacluster_number_plates_80__box0.jpg,AP28BW9994,0.987,AP28 BW 9994,
+voc0022_Datacluster_number_plates_89_.jpg,0,0.647,208,551,626,645,voc0022_Datacluster_number_plates_89__box0.jpg,2KI(MAHINDRA9908,0.557,-,fragment: bottom line only; label 9993 was also wrong (crop shows 9908)
+voc0022_Datacluster_number_plates_89_.jpg,1,0.564,422,478,637,567,voc0022_Datacluster_number_plates_89__box1.jpg,4H,0.997,-,
+voc0023_Datacluster_number_plates_90_.jpg,0,0.881,307,228,522,341,voc0023_Datacluster_number_plates_90__box0.jpg,MP17-MQ-9136,0.29,MP17.MQ.4136,
+voc0024_Datacluster_number_plates_95_.jpg,0,0.889,221,145,760,445,voc0024_Datacluster_number_plates_95__box0.jpg,BR331IND4980,0.658,BR33T4980,label OK but crop cuts off the top of the last line (4980)
+voc0025_Datacluster_number_plates_96_.jpg,0,0.86,167,612,319,658,voc0025_Datacluster_number_plates_96__box0.jpg,P03TC4945,0.964,-,left edge (state letters) cut off/unclear; label also used letter O for 0 (P O3 TC 4945)
+voc0025_Datacluster_number_plates_96_.jpg,1,0.484,199,291,365,416,voc0025_Datacluster_number_plates_96__box1.jpg,WUARIAADHAARR,0.18,-,
+voc0027_dc_auto_image_000021_bMXgvtud5K.jpg,0,0.605,548,526,591,544,voc0027_dc_auto_image_000021_bMXgvtud5K_box0.jpg,43AM,0.041,-,too small and blurry to read reliably (label 1L 35E 4337 was a guess)
+voc0027_dc_auto_image_000021_bMXgvtud5K.jpg,1,0.437,538,687,746,793,voc0027_dc_auto_image_000021_bMXgvtud5K_box1.jpg,6L35H5834,0.575,KL 35 H 5834,
+voc0028_dc_auto_image_000024_fqvRhfiO6i.jpg,0,0.838,58,345,128,374,voc0028_dc_auto_image_000024_fqvRhfiO6i_box0.jpg,"""UP8LAE98E9",0.323,UP84AE9889,
+voc0030_dc_bus_image_000039_9NispLHmAo.jpg,0,0.809,120,460,215,490,voc0030_dc_bus_image_000039_9NispLHmAo_box0.jpg,,0,-,"blurry, unreadable (was blank)"
+voc0030_dc_bus_image_000039_9NispLHmAo.jpg,1,0.799,140,507,197,539,voc0030_dc_bus_image_000039_9NispLHmAo_box1.jpg,,0,-,"blurry, unreadable (was blank)"
+voc0030_dc_bus_image_000039_9NispLHmAo.jpg,2,0.703,599,609,677,634,voc0030_dc_bus_image_000039_9NispLHmAo_box2.jpg,KL49.8262,0.271,KL.49.8262,
+voc0030_dc_bus_image_000039_9NispLHmAo.jpg,3,0.635,267,547,326,562,voc0030_dc_bus_image_000039_9NispLHmAo_box3.jpg,,0,-,
+voc0031_dc_license_plates_0RBAQHKIXQMDFYZD.jpg,0,0.963,260,242,481,311,voc0031_dc_license_plates_0RBAQHKIXQMDFYZD_box0.jpg,HBZZAX7LL6,0.434,WB42AX7446,
+voc0032_dc_license_plates_0RRPJCID3RRLSFTI.jpg,0,0.68,281,350,415,392,voc0032_dc_license_plates_0RRPJCID3RRLSFTI_box0.jpg,MPO7-7524,0.479,MP07 L 7524,
+voc0032_dc_license_plates_0RRPJCID3RRLSFTI.jpg,1,0.596,24,0,463,99,voc0032_dc_license_plates_0RRPJCID3RRLSFTI_box1.jpg,AAAC5,0.122,-,
+voc0035_dc_license_plates_3GKHBM5PWHYXHMTE.jpg,0,0.945,272,484,429,531,voc0035_dc_license_plates_3GKHBM5PWHYXHMTE_box0.jpg,KL41L7O01,0.441,KL41L7001,
+voc0036_dc_license_plates_3HE1J0YIRGRDENVO.jpg,0,0.705,308,485,510,564,voc0036_dc_license_plates_3HE1J0YIRGRDENVO_box0.jpg,TN-58D-5353,0.307,TN58D5353,label was TN-56D-5353; crop shows TN-58 / D-5353
+voc0037_dc_license_plates_7K9NEIDD2KK46L6F.jpg,0,0.946,343,453,459,515,voc0037_dc_license_plates_7K9NEIDD2KK46L6F_box0.jpg,INDKL07BXZ197,0.84,KL07BX7197,
+voc0038_dc_license_plates_7L53OMODJOLUGUOE.jpg,0,0.75,129,238,622,459,voc0038_dc_license_plates_7L53OMODJOLUGUOE_box0.jpg,UPBLAE6664INDARQM,0.575,UP84AE6664,label was UP84AE6665; crop shows ...E6664
+voc0039_dc_license_plates_VTPRN3NAPF8MUGNF.jpg,0,0.868,379,436,543,558,voc0039_dc_license_plates_VTPRN3NAPF8MUGNF_box0.jpg,KL.10AG.7249,0.878,KL.10AG.7249,
+voc0040_dc_license_plates_VYA8KOAVKLW6PJYK.jpg,0,0.812,292,281,389,339,voc0040_dc_license_plates_VYA8KOAVKLW6PJYK_box0.jpg,TN58AP5280,0.987,TN 58AP 5280,
+voc0041_dc_license_plates_VZUYOAPZ8633ZQTN.jpg,0,0.685,361,484,460,526,voc0041_dc_license_plates_VZUYOAPZ8633ZQTN_box0.jpg,DLBCD.1210,0.558,DL3CD.1210,
+voc0042_dc_license_plates_W1W3000C6IAY3F1X.jpg,0,0.556,248,706,504,817,voc0042_dc_license_plates_W1W3000C6IAY3F1X_box0.jpg,,0,-,
+voc0043_dc_tempo_van__image_000489_73h4cMU8Z1.jpg,0,0.891,283,617,386,665,voc0043_dc_tempo_van__image_000489_73h4cMU8Z1_box0.jpg,MP13G49462],0.129,MP.13.GA.9462,
+voc0044_dc_tempo_van__image_000490_CF9bwJsyoX.jpg,0,0.657,233,495,461,537,voc0044_dc_tempo_van__image_000490_CF9bwJsyoX_box0.jpg,[40962762,0.202,KA09C2763,label was KA99C2763; crop shows KA 09 C 2763
+voc0045_dc_truck_image_001561_IEhCyPTs.jpg,0,0.803,382,499,464,551,voc0045_dc_truck_image_001561_IEhCyPTs_box0.jpg,MH1BAA50OZ,0.133,MH.18AA.1002,
+voc0045_dc_truck_image_001561_IEhCyPTs.jpg,1,0.735,141,353,278,406,voc0045_dc_truck_image_001561_IEhCyPTs_box1.jpg,,0,-,
+voc0045_dc_truck_image_001561_IEhCyPTs.jpg,2,0.564,158,0,564,61,voc0045_dc_truck_image_001561_IEhCyPTs_box2.jpg,,0,-,
+voc0046_dc_truck_image_001564_RZeQ1TZR.jpg,0,0.63,523,458,638,515,voc0046_dc_truck_image_001564_RZeQ1TZR_box0.jpg,KA01AJ.7533,0.541,KA.01.AJ.7533,
+voc0046_dc_truck_image_001564_RZeQ1TZR.jpg,1,0.53,312,457,414,535,voc0046_dc_truck_image_001564_RZeQ1TZR_box1.jpg,TATRFOA,0.223,-,
+voc0046_dc_truck_image_001564_RZeQ1TZR.jpg,2,0.489,513,369,652,418,voc0046_dc_truck_image_001564_RZeQ1TZR_box2.jpg,ICHEB,0.117,-,
+voc0046_dc_truck_image_001564_RZeQ1TZR.jpg,3,0.42,289,357,436,418,voc0046_dc_truck_image_001564_RZeQ1TZR_box3.jpg,,0,-,

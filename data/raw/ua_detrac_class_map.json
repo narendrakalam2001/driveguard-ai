@@ -1,0 +1,9 @@
+{
+  "_comment": "ids confirmed visually: 0=truck, 1=car, 2=van, 3=bus",
+  "*": {
+    "0": "Truck",
+    "1": "Car",
+    "2": "Van",
+    "3": "Bus"
+  }
+}

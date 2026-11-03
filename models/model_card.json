@@ -1,0 +1,34 @@
+{
+  "model_name": "DriveGuard AI Vehicle Detector",
+  "architecture": "YOLOv8m",
+  "base_weights": "yolov8m.pt",
+  "classes": {
+    "0": "Car",
+    "1": "Truck",
+    "2": "Bus",
+    "3": "Motorcycle",
+    "4": "Auto-rickshaw",
+    "5": "Bicycle",
+    "6": "Van"
+  },
+  "data_source": [
+    "/kaggle/input/datasets/narendrakalam/detrac-subset/DETRAC_Upload"
+  ],
+  "training": {
+    "epochs": 30,
+    "img_size": 640,
+    "batch_size": 32,
+    "seed": 42
+  },
+  "metrics": {
+    "mAP50": 0.6802076158998965,
+    "mAP50_95": 0.5077595304047995,
+    "precision": 0.7067634293525384,
+    "recall": 0.6524636527431997
+  },
+  "target_metrics": {
+    "mAP50": 0.85,
+    "fps_gpu": 25,
+    "fps_cpu": 8
+  }
+}

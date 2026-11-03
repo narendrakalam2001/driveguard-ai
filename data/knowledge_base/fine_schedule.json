@@ -1,0 +1,66 @@
+{
+  "_disclaimer": "Indicative fine ranges for demo/report-generation purposes only, based on the Motor Vehicles (Amendment) Act, 2019 central schedule. State governments have since notified their own revised amounts under Section 200 — this file is NOT a substitute for the current state-wise RTO notification and must not be treated as legal advice.",
+  "SPEEDING": {
+    "section": "Section 183",
+    "first_offense_min": 1000,
+    "first_offense_max": 2000,
+    "subsequent_offense_min": 2000,
+    "subsequent_offense_max": 4000,
+    "currency": "INR",
+    "notes": "Light Motor Vehicle range shown; fines for medium/heavy passenger and goods vehicles are typically higher under state notifications."
+  },
+  "DANGEROUS_DRIVING": {
+    "section": "Section 184",
+    "first_offense_min": 1000,
+    "first_offense_max": 5000,
+    "subsequent_offense_min": 5000,
+    "subsequent_offense_max": 10000,
+    "currency": "INR",
+    "notes": "May include imprisonment up to 1 year (first offense) / 2 years (subsequent) per the central Act; amounts here cover the monetary fine component only."
+  },
+  "RED_LIGHT": {
+    "section": "Section 177 / Rule 119",
+    "first_offense_min": 1000,
+    "first_offense_max": 1000,
+    "subsequent_offense_min": 1000,
+    "subsequent_offense_max": 1000,
+    "currency": "INR",
+    "notes": "Often clubbed with Section 184 if the violation also endangered other road users."
+  },
+  "OVERLOADING": {
+    "section": "Section 194",
+    "first_offense_min": 20000,
+    "first_offense_max": 20000,
+    "subsequent_offense_min": 20000,
+    "subsequent_offense_max": 20000,
+    "currency": "INR",
+    "notes": "Plus INR 2,000 per additional tonne of excess load, per the central schedule."
+  },
+  "NO_HELMET": {
+    "section": "Section 129 / 194D",
+    "first_offense_min": 1000,
+    "first_offense_max": 1000,
+    "subsequent_offense_min": 1000,
+    "subsequent_offense_max": 1000,
+    "currency": "INR",
+    "notes": "Also attracts a 3-month driving licence disqualification under the central Act."
+  },
+  "WRONG_LANE": {
+    "section": "Section 177",
+    "first_offense_min": 500,
+    "first_offense_max": 500,
+    "subsequent_offense_min": 1500,
+    "subsequent_offense_max": 1500,
+    "currency": "INR",
+    "notes": "General penalty provision; amount varies by state notification."
+  },
+  "GENERAL": {
+    "section": "Section 177",
+    "first_offense_min": 500,
+    "first_offense_max": 500,
+    "subsequent_offense_min": 1500,
+    "subsequent_offense_max": 1500,
+    "currency": "INR",
+    "notes": "Default/residual penalty for offences without a dedicated section."
+  }
+}

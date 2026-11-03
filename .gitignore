@@ -1,0 +1,92 @@
+# =============================================================================
+# DriveGuard AI - .gitignore
+# Goal: push everything Render + Streamlit Cloud need, keep secrets, model
+# weights, datasets and runtime data OUT of git.
+#   Render      -> builds from Dockerfile / render.yaml (weights come from HF Hub)
+#   Streamlit   -> runs frontend/app.py with frontend/requirements.txt
+# =============================================================================
+
+# --- Secrets (NEVER commit) ---------------------------------------------------
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+secrets.toml
+*.pem
+*.key
+
+# --- Python -------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+venv/
+env/
+
+# --- Jupyter ------------------------------------------------------------------
+.ipynb_checkpoints/
+
+# --- Model weights: hosted on HuggingFace Hub, downloaded at deploy time ------
+# (scripts/download_models.py fetches them on Render; GitHub rejects files >100MB)
+*.pt
+*.pth
+*.onnx
+*.engine
+models/runs/
+models/plate_data.yaml
+# kept in git: models/model_card.json, models/plate_model_card.json, models/.gitkeep
+
+# --- Datasets (too large; see README for Kaggle download commands) ------------
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/ua_detrac_class_map.json
+data/processed/*
+!data/processed/.gitkeep
+data/plates/*
+!data/plates/.gitkeep
+# kept in git: data/knowledge_base/* (RAG source files the API needs)
+
+# --- Runtime / generated state (recreated on the server) ----------------------
+chromadb_store/
+violation_logs/*.db
+violation_logs/*.db-*
+violation_logs/evidence/
+# kept in git: violation_logs/schema.sql (the API creates the DB from it)
+evidence_frames/*
+!evidence_frames/.gitkeep
+plate_crops/
+logs/
+*.log
+
+# --- Videos (large) -----------------------------------------------------------
+sample_videos/uploads/
+*.mp4
+*.avi
+*.mov
+*.mkv
+# keep a small (<25MB) demo clip if you add one:
+!sample_videos/demo*.mp4
+
+# --- Local scratch output of helper scripts -----------------------------------
+plate_demo.jpg
+preview_png.jpg
+
+# --- Archives -----------------------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+
+# --- IDE / OS -----------------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

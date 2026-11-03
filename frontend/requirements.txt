@@ -1,0 +1,15 @@
+# Light dependencies for the dashboard-only deployment (Streamlit Community Cloud, Python 3.11).
+# No torch / ultralytics / easyocr: the lite demo reads bundled synthetic data (frontend/demo_client.py).
+streamlit==1.40.1
+streamlit-image-coordinates>=0.1.9,<1
+plotly==5.24.1
+pandas==2.2.3
+numpy==1.26.4
+# st.dataframe needs pyarrow; the newest pyarrow requires NumPy 2, so keep a release that works with numpy 1.26
+pyarrow==17.0.0
+requests==2.32.3
+opencv-python-headless==4.10.0.84
+python-dotenv==1.0.1
+# used by the lite demo for CSV/Excel export and PDF notices/reports
+openpyxl==3.1.5
+reportlab==4.2.5
