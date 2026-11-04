@@ -55,4 +55,5 @@ requests==2.32.3
 # (Streamlit's AppTest ships with streamlit; no extra package needed)
 pytest==8.3.3
 pytest-cov==6.0.0
-httpx==0.27.2
+# >=0.28 is required by ultralytics-platform (pulled in by ultralytics 8.4.x); the API tests use it via FastAPI TestClient
+httpx>=0.28,<1

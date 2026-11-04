@@ -10,6 +10,10 @@ violations log, detail view, status changes, notices (fixed template), analytics
 CSV/Excel export and PDF reports. It reuses the real backend modules (``AlertSystem``, ``report_export``,
 ``insights``, ``ReportGenerator``), none of which import torch.
 
+AI notices and insights are OFF by default. Add ``GEMINI_API_KEY`` to the app's secrets to switch them on
+(still grounded by the exact fine/section lookup and the notice validator, and capped per app run so a
+public demo cannot burn the whole quota). Without a key, or when the cap is reached, the fixed template is used.
+
 Changes made in the demo (status, edited notices) live in a temp copy of the database, are shared by all
 visitors of the running app, and are discarded when the app restarts.
 """
@@ -36,6 +40,24 @@ DEMO_DISABLED_MSG = (
     "Video processing is switched off in the lite demo (Streamlit Cloud cannot run the AI models). "
     "Run the full stack locally with `python scripts/run_api.py` to process videos."
 )
+
+
+DEMO_LLM_LIMIT = int(os.getenv("DRIVEGUARD_DEMO_LLM_LIMIT", "60"))  # max Gemini calls per app run (public-demo guard)
+_llm_calls = 0
+
+
+def llm_enabled() -> bool:
+    """True when a Gemini key is configured (Streamlit secrets or environment) for the lite demo."""
+    return bool(os.getenv("GEMINI_API_KEY", "").strip())
+
+
+def _take_llm_call() -> bool:
+    """Reserve one Gemini call; False once the per-run cap is used up."""
+    global _llm_calls
+    if not llm_enabled() or _llm_calls >= DEMO_LLM_LIMIT:
+        return False
+    _llm_calls += 1
+    return True
 
 
 def is_demo_mode() -> bool:
@@ -194,7 +216,7 @@ class DemoClient:
 
     # ------------------------------------------------------------------ handlers
     def _health(self, **_: Any) -> dict:
-        return {"status": "ok", "service": "DriveGuard AI (lite demo)", "version": "lite", "llm_configured": False, "mode": "demo"}
+        return {"status": "ok", "service": "DriveGuard AI (lite demo)", "version": "lite", "llm_configured": llm_enabled(), "mode": "demo"}
 
     def _live_stats(self, **_: Any) -> dict:
         return {"vehicles_in_frame": None, "fps": None, "counts_by_class": {}, "vehicles": [], **self._system.get_recent_stats(hours=1)}
@@ -244,7 +266,7 @@ class DemoClient:
         return {**dispatch, "message": "Mock RTO portal: recorded, nothing was delivered to a real RTO."}
 
     def _generate_report(self, body: Dict[str, Any], **_: Any) -> dict:
-        """Write a notice with the fixed template (no LLM, no RAG) so the lite app needs no API key."""
+        """Write a notice: Gemini when a key is set and the cap allows it, otherwise the fixed template."""
         from src.report_generator import ReportGenerator
         from src.violation_classifier import ViolationRecord
 
@@ -257,15 +279,26 @@ class DemoClient:
             location=row["location"], camera_id=row["camera_id"], timestamp=datetime.fromisoformat(row["timestamp"]),
         )
         repeat = bool(record.plate_number) and self._system.get_prior_plate_numbers(camera_id=row["camera_id"]).count(record.plate_number) > 1
-        notice = ReportGenerator().generate_fallback_notice(record, vehicle_id=f"{record.vehicle_type[:3].upper()}_{row['id'][:6].upper()}", is_repeat_offender=repeat)
+        vehicle_id = f"{record.vehicle_type[:3].upper()}_{row['id'][:6].upper()}"
+        generator = ReportGenerator()
+        notice, label = None, "fixed template (lite demo, no LLM)"
+        if body.get("use_llm", True) and _take_llm_call():
+            try:
+                notice = generator.generate(record, vehicle_id=vehicle_id, is_repeat_offender=repeat)
+                label = notice.model_used
+            except Exception:  # noqa: BLE001 - quota, network or validation trouble: degrade to the template
+                notice = None
+        if notice is None:
+            notice = generator.generate_fallback_notice(record, vehicle_id=vehicle_id, is_repeat_offender=repeat)
         self._system.update_notice(row["id"], notice.notice_text)
-        return {"violation_id": row["id"], "notice_text": notice.notice_text, "model_used": "fixed template (lite demo, no LLM)", "cited_context": notice.cited_context}
+        return {"violation_id": row["id"], "notice_text": notice.notice_text, "model_used": label, "cited_context": notice.cited_context}
 
     def _insights(self, params: Dict[str, Any], **_: Any) -> dict:
         from src.insights import generate_insights
 
         cam = params.get("camera_id")
-        return generate_insights(self._system.get_analytics_summary(camera_id=cam), self._system.get_detailed_analytics(camera_id=cam), use_llm=False)
+        want_llm = str(params.get("use_llm", "true")).lower() != "false" and _take_llm_call()
+        return generate_insights(self._system.get_analytics_summary(camera_id=cam), self._system.get_detailed_analytics(camera_id=cam), use_llm=want_llm)
 
     def _export(self, params: Dict[str, Any], **_: Any) -> bytes:
         from src.report_export import violations_to_csv, violations_to_xlsx
@@ -283,10 +316,14 @@ class DemoClient:
         return summary_report_pdf(summary, detailed, insight["text"] or "", self._system.query_violations(camera_id=cam, severity="SEVERE", limit=10))
 
     def _integrations(self, **_: Any) -> dict:
+        from src.config import GEMINI_MODEL_NAME
+
         return {"integrations": [
             {"name": "Demo data", "mode": "live", "detail": "1,800 synthetic violations, 8 cameras, 6 months"},
             {"name": "AI pipeline (YOLOv8 + DeepSORT + ANPR)", "mode": "not_configured", "detail": "off in the lite demo; run the full stack locally"},
-            {"name": "Gemini LLM + RAG", "mode": "not_configured", "detail": "notices use the fixed template in the lite demo"},
+            {"name": "Gemini LLM", "mode": "live" if llm_enabled() else "not_configured",
+             "detail": f"{GEMINI_MODEL_NAME}, max {DEMO_LLM_LIMIT} calls per app run" if llm_enabled() else "no GEMINI_API_KEY in the app secrets; notices use the fixed template"},
+            {"name": "RAG knowledge base (ChromaDB)", "mode": "not_configured", "detail": "vector store is not built in the lite demo; exact fine and section lookup is used"},
             {"name": "Vahan database", "mode": "mock", "detail": "no public API access; not implemented"},
             {"name": "RTO portal", "mode": "mock", "detail": "send-to-RTO records an audit row only"},
             {"name": "Police dashboard", "mode": "mock", "detail": "not implemented"},

@@ -128,3 +128,70 @@ def test_every_screen_renders_in_demo_mode(demo_env, screen):
     assert not at.exception, [e.value for e in at.exception]
     assert not at.error, [e.value for e in at.error]
     assert any("Lite demo" in i.value for i in at.info)
+
+
+# ----------------------------- opt-in Gemini in the lite demo -----------------------------
+def _fresh_violation(client) -> str:
+    rows = client.json("GET", "/violations", {"severity": "WARNING", "limit": 200})["violations"]
+    return rows[0]["id"]
+
+
+def _stub_llm(monkeypatch, label="gemini-test"):
+    import dataclasses
+
+    from src.report_generator import ReportGenerator
+
+    def fake(self, record, vehicle_id, is_repeat_offender=False, evidence_frame_ref=None):
+        notice = self.generate_fallback_notice(record, vehicle_id, is_repeat_offender)
+        return dataclasses.replace(notice, model_used=label)
+
+    monkeypatch.setattr(ReportGenerator, "generate", fake)
+
+
+def test_llm_is_used_only_when_a_key_is_set(client, monkeypatch):
+    import frontend.demo_client as dc
+
+    _stub_llm(monkeypatch)
+    vid = _fresh_violation(client)
+    monkeypatch.setenv("GEMINI_API_KEY", "")
+    assert "template" in client.json("POST", "/generate-report", json={"violation_id": vid, "use_llm": True})["model_used"]
+    monkeypatch.setenv("GEMINI_API_KEY", "fake-key")
+    monkeypatch.setattr(dc, "_llm_calls", 0)
+    assert client.json("POST", "/generate-report", json={"violation_id": vid, "use_llm": True})["model_used"] == "gemini-test"
+    assert "template" in client.json("POST", "/generate-report", json={"violation_id": vid, "use_llm": False})["model_used"]
+
+
+def test_llm_errors_fall_back_to_the_template(client, monkeypatch):
+    import frontend.demo_client as dc
+    from src.report_generator import ReportGenerator
+
+    def boom(*_a, **_k):
+        raise RuntimeError("quota exceeded")
+
+    monkeypatch.setenv("GEMINI_API_KEY", "fake-key")
+    monkeypatch.setattr(dc, "_llm_calls", 0)
+    monkeypatch.setattr(ReportGenerator, "generate", boom)
+    res = client.json("POST", "/generate-report", json={"violation_id": _fresh_violation(client), "use_llm": True})
+    assert "TRAFFIC VIOLATION NOTICE" in res["notice_text"] and "template" in res["model_used"]
+
+
+def test_llm_call_cap_protects_the_quota(client, monkeypatch):
+    import frontend.demo_client as dc
+
+    _stub_llm(monkeypatch)
+    monkeypatch.setenv("GEMINI_API_KEY", "fake-key")
+    monkeypatch.setattr(dc, "_llm_calls", 0)
+    monkeypatch.setattr(dc, "DEMO_LLM_LIMIT", 1)
+    vid = _fresh_violation(client)
+    labels = [client.json("POST", "/generate-report", json={"violation_id": vid, "use_llm": True})["model_used"] for _ in range(3)]
+    assert labels[0] == "gemini-test" and all("template" in x for x in labels[1:])
+
+
+def test_integrations_report_gemini_honestly(client, monkeypatch):
+    def gemini_mode():
+        return next(i["mode"] for i in client.json("GET", "/integrations")["integrations"] if i["name"] == "Gemini LLM")
+
+    monkeypatch.setenv("GEMINI_API_KEY", "")
+    assert gemini_mode() == "not_configured"
+    monkeypatch.setenv("GEMINI_API_KEY", "fake-key")
+    assert gemini_mode() == "live"

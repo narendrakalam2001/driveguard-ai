@@ -5,10 +5,10 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.4-ee4c2c.svg)](https://pytorch.org)
 [![YOLOv8](https://img.shields.io/badge/Detector-YOLOv8m-00A3E0.svg)](https://github.com/ultralytics/ultralytics)
 [![FastAPI](https://img.shields.io/badge/FastAPI-31%20routes-green.svg)](https://fastapi.tiangolo.com)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red.svg)](https://streamlit.io)
-[![Tests](https://img.shields.io/badge/tests-336%20passing-brightgreen.svg)](#-test-coverage)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red.svg)](https://driveguard-ai-lite.streamlit.app)
+[![Tests](https://img.shields.io/badge/tests-364%20passing-brightgreen.svg)](#-test-coverage)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com)
-[![HuggingFace](https://img.shields.io/badge/Models-HuggingFace%20Hub-yellow.svg)](https://huggingface.co)
+[![HuggingFace](https://img.shields.io/badge/Models-HuggingFace%20Hub-yellow.svg)](https://huggingface.co/narendrakalam2001/driveguard-ai-models)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > **Domain:** Computer Vision / Smart Cities / Road Safety  
@@ -54,7 +54,7 @@ Every claim in this README is either measured or explicitly marked as an estimat
 | **Pipeline speed (CPU)** | `≈ 1.7 FPS — 720×1280 video, every frame, plates on (Intel i7-10510U laptop, one run)` |
 | **Knowledge base** | `23 documents in ChromaDB (8 MV Act sections · 7 fine entries · 5 speed-limit entries · 3 FAQ chunks)` |
 | **API / Dashboard** | `31 FastAPI routes · 6 Streamlit screens` |
-| **Automated tests** | `336 passing` |
+| **Automated tests** | `364 passing` |
 | **Original targets** | `mAP@0.5 > 0.85 — not met · 25 FPS on GPU — not measured · speed error ±3 km/h — not validated` |
 
 > The numbers above are what the system actually achieved. The three original targets are listed so the gap is visible, not hidden. See the **Ethical Considerations & Limitations** section below.
@@ -65,9 +65,9 @@ Every claim in this README is either measured or explicitly marked as an estimat
 
 | Service | URL |
 |---|---|
-| 📊 **Traffic Control Dashboard (Lite Demo)** | [https://YOUR-APP-NAME.streamlit.app](https://YOUR-APP-NAME.streamlit.app) |
+| 📊 **Traffic Control Dashboard (Lite Demo)** | [https://driveguard-ai-lite.streamlit.app](https://driveguard-ai-lite.streamlit.app) |
 | 🚀 **FastAPI (Swagger UI)** | Full AI pipeline, runs locally at `http://localhost:8000/docs` |
-| 🤗 **Model weights (HuggingFace Hub)** | [narendrakalam2001/driveguard-ai-models](https://huggingface.co/narendrakalam2001/driveguard-ai-models) |
+| 🤗 **Model weights (HuggingFace Hub, public)** | [narendrakalam2001/driveguard-ai-models](https://huggingface.co/narendrakalam2001/driveguard-ai-models) — no login or token needed to download |
 | 📓 **EDA Notebook** | [notebooks/driveguard_ai_eda.ipynb](notebooks/driveguard_ai_eda.ipynb) |
 | 📓 **Kaggle Training Notebook** | [notebooks/Kaggle_Training.ipynb](notebooks/Kaggle_Training.ipynb) |
 
@@ -75,9 +75,9 @@ Every claim in this README is either measured or explicitly marked as an estimat
 > without the AI backend. It uses **synthetic data** (1,800 violations, 8 cameras, 6 months; no real vehicles or
 > people) so you can explore the violations log, notices, analytics, exports and PDF reports.
 > **Video upload and live detection (YOLOv8 + DeepSORT + ANPR) are not available in the hosted demo** because
-> the free tier has too little memory for the models. Run the full stack locally to process real videos
-> (see [Quick start](#-quick-start)).
-> ⚠️ Render free tier: the first request may take 30–60 seconds (cold start), and model loading adds ~30 s on CPU.
+> the free tier has too little memory for the models. To process real videos, run the full stack locally
+> (see [Quickstart](#-quickstart)); the model weights download automatically from the public Hub repo.
+> More details: [Hosted Lite Demo](#hosted-lite-demo).
 
 ---
 
@@ -123,6 +123,10 @@ Every claim in this README is either measured or explicitly marked as an estimat
 ║                                                                                            ║
 ╚════════════════════════════════════════════════════════════════════════════════════════════╝
 ```
+
+> **Two run modes, one dashboard.** With `DRIVEGUARD_API_URL` set, the dashboard talks to the FastAPI backend above (full pipeline).
+> Without it (the hosted demo), a built-in `DemoClient` answers the same requests from a bundled synthetic database, so the
+> dashboard runs on a free host without the AI models.
 
 ---
 
@@ -300,11 +304,12 @@ driveguard-ai/
 │   └── api.py                              # FastAPI — 31 routes
 │
 ├── frontend/
-│   ├── app.py                              # 6-screen Streamlit dashboard
+│   ├── app.py                              # 6-screen Streamlit dashboard (full mode + lite demo mode)
 │   ├── api_client.py                       # HTTP client with clear error messages
+│   ├── demo_client.py                      # Lite-demo backend: serves the same endpoints from bundled synthetic data
 │   ├── helpers.py                          # Plate formatting · calibration drawing · click scaling
 │   ├── states.py                           # Plate state-code → state name
-│   └── requirements.txt                    # Light dependencies for dashboard-only deploys
+│   └── requirements.txt                    # Light dependencies for the hosted dashboard (no torch)
 │
 ├── scripts/
 │   ├── run_api.py · run_dashboard.py       # Start the API / dashboard
@@ -317,9 +322,10 @@ driveguard-ai/
 │   ├── make_subset.py · find_duplicate_images.py · inspect_plate_dataset.py
 │   ├── preview_yolo_labels.py · try_plate_detector.py
 │   ├── ocr_bench.py · evaluate_plate_ocr.py  # OCR benchmarks on hand-labelled crops
-│   ├── seed_demo_data.py                   # Synthetic violations for demos
+│   ├── seed_demo_data.py                   # Synthetic violations for local demos
+│   ├── build_demo_db.py                    # Rebuild the bundled lite-demo database (1,800 synthetic violations)
 │   ├── frames_to_video.py                  # Build a demo clip from dataset frames
-│   ├── download_models.py                  # Fetch weights from the HuggingFace Hub
+│   ├── download_models.py                  # Fetch weights from the (public) HuggingFace Hub repo
 │   ├── push_models_to_hf.py                # Upload weights to the HuggingFace Hub
 │   └── check_rag.py                        # Verify RAG retrieval
 │
@@ -328,6 +334,8 @@ driveguard-ai/
 │   └── Kaggle_Training.ipynb               # YOLOv8m training on a Kaggle T4
 │
 ├── data/
+│   ├── demo/
+│   │   └── demo_violations.db              # Bundled SYNTHETIC data for the hosted lite demo
 │   └── knowledge_base/
 │       ├── mv_act_sections.json            # Motor Vehicles Act sections (RAG)
 │       ├── fine_schedule.json              # Indicative fine amounts
@@ -337,12 +345,12 @@ driveguard-ai/
 ├── models/
 │   ├── model_card.json                     # Vehicle detector model card
 │   └── plate_model_card.json               # Plate detector model card
-│                                           # (weights: yolov8_vehicle.pt · yolov8_plate.pt → HuggingFace Hub)
+│                                           # (weights: yolov8_vehicle.pt · yolov8_plate.pt → public HuggingFace Hub repo)
 │
 ├── violation_logs/
 │   └── schema.sql                          # SQLite schema: cameras · vehicles · violations · rto_dispatches
 │
-├── tests/                                  # 336 pytest tests (28 modules)
+├── tests/                                  # 364 pytest tests (29 modules)
 │
 ├── docs/
 │   ├── architecture/
@@ -360,7 +368,7 @@ driveguard-ai/
 ├── Dockerfile                              # FastAPI production image (CPU)
 ├── Dockerfile.dashboard                    # Dashboard-only image
 ├── docker-compose.yml                      # API + dashboard (ports 8000 + 8501)
-├── render.yaml                             # Render.com deployment
+├── render.yaml                             # Render.com blueprint for the full API (needs ≥ 2 GB RAM; not the free tier)
 ├── .github/workflows/ci.yml                # Lint · tests · Docker builds · model-size check
 ├── .gitignore · .dockerignore
 ├── .env.example                            # All settings, documented
@@ -387,13 +395,17 @@ cp .env.example .env      # Windows: copy .env.example .env  → then add your G
 
 ### 2. Get the Model Weights
 
-Either train them (see the notebooks) or download them from the Hub into `models/`:
+The trained weights are hosted in a **public** HuggingFace repo, so no account or token is required:
 
 ```bash
-# expects yolov8_vehicle.pt and yolov8_plate.pt in the repo
-HF_MODEL_REPO=<your-hf-username>/driveguard-ai-models python scripts/download_models.py        # macOS / Linux
-$env:HF_MODEL_REPO="<your-hf-username>/driveguard-ai-models"; python scripts/download_models.py  # Windows PowerShell
+# macOS / Linux
+HF_MODEL_REPO=narendrakalam2001/driveguard-ai-models python scripts/download_models.py
+
+# Windows PowerShell
+$env:HF_MODEL_REPO="narendrakalam2001/driveguard-ai-models"; python scripts/download_models.py
 ```
+
+This places `yolov8_vehicle.pt` and `yolov8_plate.pt` in `models/`. (You can also train them yourself — see the notebooks.)
 
 ### 3. Build the RAG Knowledge Base
 
@@ -436,14 +448,22 @@ Open **Upload and analysis**, upload a video, click the 4 road corners, enter th
 ### 6. (Optional) Demo Data Without a Video
 
 ```bash
-python scripts/seed_demo_data.py --count 1000      # synthetic violations for the dashboard
+python scripts/seed_demo_data.py --count 1000      # synthetic violations for the dashboard (needs the API running)
+```
+
+To try the dashboard **without the API and without any models** (the same mode as the hosted demo):
+
+```bash
+pip install -r frontend/requirements.txt
+DRIVEGUARD_DEMO=1 streamlit run frontend/app.py                 # macOS / Linux
+$env:DRIVEGUARD_DEMO="1"; streamlit run frontend/app.py          # Windows PowerShell
 ```
 
 ### 7. Run Tests
 
 ```bash
 python -m pytest tests -q --cov=src --cov=services --cov=serving
-# 336 collected · 336 passed
+# 364 collected · 364 passed
 ```
 
 ---
@@ -468,6 +488,35 @@ docker compose down
 |---|---|
 | FastAPI + Swagger | `http://localhost:8000/docs` |
 | Streamlit Dashboard | `http://localhost:8501` |
+
+---
+
+<a id="hosted-lite-demo"></a>
+
+## ☁️ Hosted Lite Demo (Streamlit Cloud)
+
+The public demo runs **without the AI backend**. Streamlit Community Cloud has about 1 GB of RAM, far too little for YOLOv8m + EasyOCR + sentence-transformers, so the hosted dashboard uses a built-in `DemoClient` (`frontend/demo_client.py`) instead of the FastAPI server.
+
+| | Hosted lite demo | Full system (local / Docker) |
+|---|---|---|
+| Data | 1,800 **synthetic** violations · 8 cameras · 6 months (`data/demo/demo_violations.db`) | Real detections from your videos |
+| Violations log · detail · status · notices · exports · PDF reports | ✅ | ✅ |
+| Analytics and insights | ✅ (rule-based; AI-written if a Gemini key is set) | ✅ |
+| AI-drafted notices | Fixed template; Gemini if a key is set (capped per app run) | Gemini + RAG + validator |
+| Video upload, live detection, tracking, speed, plates | ❌ (recorded screenshots shown instead) | ✅ |
+| Evidence images and speed traces | ❌ (not part of the synthetic data) | ✅ |
+
+**How it is deployed:** Streamlit Community Cloud → repository `driveguard-ai`, branch `main`, main file `frontend/app.py`, Python 3.11. It installs `frontend/requirements.txt` (no torch). Demo mode switches on automatically when `DRIVEGUARD_API_URL` is not set.
+
+**Optional AI notices in the demo:** add the key in the app's **Settings → Secrets**:
+
+```toml
+GEMINI_API_KEY = "your_key"
+```
+
+The demo then drafts notices with Gemini (still grounded by the exact fine/section lookup and the notice validator, with a fallback to the template). Calls are capped per app run (`DRIVEGUARD_DEMO_LLM_LIMIT`, default 60) so a public demo cannot use up the whole quota.
+
+**Rebuild the demo data:** `python scripts/build_demo_db.py --count 1800 --seed 42` (deterministic; all plates and incidents are randomly generated, no real vehicle or person is represented). Changes made in the hosted demo are shared by its visitors and are discarded when the app restarts.
 
 ---
 
@@ -704,12 +753,14 @@ A notice reads like a legal document, so the LLM is never trusted blindly:
 | **5. Analytics** | KPIs · AI / rule-based insights · hourly trend · severity · vehicle types · speed histogram · day × hour heatmap · monthly trend · state breakdown · top plates |
 | **6. Reports & Export** | Summary PDF · filtered export · scheduling recipe · integration status (live vs mock) |
 
+> In the hosted lite demo, screens 1 and 2 show recorded screenshots instead of live processing (see [Hosted Lite Demo](#hosted-lite-demo)); screens 3–6 work on the bundled synthetic data.
+
 ---
 
 ## 🧪 Test Coverage
 
 ```
-336 tests collected across 28 modules:
+364 tests collected across 29 modules:
 
   Dashboard & API            (84)  — all 6 screens run against the real API with Streamlit AppTest ·
                                      31 routes: success · 400 · 404 · 422 · API-key auth · live stream ·
@@ -724,11 +775,14 @@ A notice reads like a legal document, so the LLM is never trusted blindly:
   Storage & exports          (32)  — SQLite persistence · filters · local-time analytics · CSV / Excel / PDF ·
                                      CSV-injection protection
   Config & utilities         (22)  — config invariants · preprocessing · synthetic data · environment sanity
+  Hosted lite demo           (28)  — DemoClient endpoints · demo-mode switch · status / notice / RTO flow ·
+                                     exports and PDFs · opt-in Gemini with call cap and template fallback ·
+                                     every screen renders on the bundled synthetic data
 
-Result: 336 passed
+Result: 364 passed
 ```
 
-The suite is **hermetic**: it forces its own environment (no API key, default plate region and threshold), so a developer's `.env` cannot change test results. CI runs lint, tests, both Docker builds and a model-size check on every push.
+The suite is **hermetic**: it forces its own environment (no API key, default plate region and threshold, full API mode), so a developer's `.env` cannot change test results, and it passes on both pytest 8 and 9 (project loggers do not propagate, so the one log-assertion test attaches its capture handler explicitly). CI runs lint, tests, both Docker builds and a model-size check on every push.
 
 ---
 
@@ -748,13 +802,13 @@ The suite is **hermetic**: it forces its own environment (no API key, default pl
 | **API** | FastAPI + Uvicorn · input validation (422) · upload size enforced while streaming · optional `X-API-Key` |
 | **Concurrency** | Models loaded once and shared; one video at a time (queue); background threads |
 | **Video** | H.264 annotated output via `imageio-ffmpeg`; MJPEG live stream; newest 20 videos kept |
-| **Dashboard** | Streamlit + Plotly; click-to-calibrate with `streamlit-image-coordinates` |
+| **Dashboard** | Streamlit + Plotly; click-to-calibrate with `streamlit-image-coordinates`; full mode (FastAPI) or lite mode (bundled synthetic data) |
 | **Storage** | SQLite (violations · vehicles · cameras · rto_dispatches); PostgreSQL recommended for production |
 | **Time** | Stored in UTC, displayed in IST (`DISPLAY_UTC_OFFSET_MINUTES`) |
 | **Logging** | Structured JSON logs; plate rejections logged with the OCR text |
 | **Security** | CSV-injection guard on exports · evidence paths confined to the evidence folder · no secrets in code |
 | **CI/CD** | GitHub Actions — lint · pytest · Docker builds · model-size check |
-| **Deployment** | Render (API) + Streamlit Community Cloud (dashboard) + HuggingFace Hub (weights) |
+| **Deployment** | Streamlit Community Cloud (lite demo, synthetic data) · HuggingFace Hub (public weights) · Docker / `render.yaml` for the full API (needs ≥ 2 GB RAM; not the free tier) |
 
 <details>
 <summary><b>Configuration (.env)</b></summary>
@@ -771,8 +825,11 @@ The suite is **hermetic**: it forces its own environment (no API key, default pl
 | `MAX_REPORTED_SPEED_KMPH` | `200` | Readings at or above this are measurement errors |
 | `PRELOAD_MODELS` | `true` | Load models when the API starts |
 | `DRIVEGUARD_API_KEY` | empty | If set, state-changing endpoints require `X-API-Key` (leave empty locally) |
-| `DRIVEGUARD_API_URL`, `DRIVEGUARD_PUBLIC_API_URL` | `http://localhost:8000` | Where the dashboard finds the API / where the *browser* finds the live stream |
-| `HF_MODEL_REPO` | – | HuggingFace repo that holds the weights |
+| `DRIVEGUARD_API_URL`, `DRIVEGUARD_PUBLIC_API_URL` | `http://localhost:8000` | Where the dashboard finds the API / where the *browser* finds the live stream. **If `DRIVEGUARD_API_URL` is not set at all, the dashboard starts in lite demo mode** |
+| `DRIVEGUARD_DEMO` | unset | `1` forces the lite demo (bundled synthetic data, no API); `0` forces full API mode |
+| `DRIVEGUARD_DEMO_LLM_LIMIT` | `60` | Max Gemini calls per app run in the lite demo (protects the quota of a public demo) |
+| `HF_MODEL_REPO` | – | HuggingFace repo that holds the weights (`narendrakalam2001/driveguard-ai-models`, public) |
+| `HUGGINGFACE_TOKEN` | empty | Only needed to **upload** weights (`push_models_to_hf.py`) or to download from a private repo; not needed for the public repo |
 | `DISPLAY_UTC_OFFSET_MINUTES` | `330` | Charts and date filters use IST |
 
 </details>
@@ -824,9 +881,10 @@ This is a research prototype and says so plainly:
 - **Heavy stop-and-go traffic fragments tracks** (the same car gets a new ID after being hidden), which inflates *Total vehicles*
 - **Only speeding is detected.** Red-light, wrong-way, helmet and overloading detection are roadmap items
 - **Vahan, the RTO portal and the police dashboard are mocks**, labelled as such in the UI and API
+- **The hosted demo shows synthetic data and does not run the AI models.** Its numbers illustrate the dashboard, not the detection accuracy; the measured results are in *Prototype Results*
 - **Fine amounts are indicative** (central schedule); the current state-notified amount applies
 - **One video is processed at a time**; SQLite is a single-node store
-- **Data licensing:** the DataCluster plate images are licensed CC BY-NC-ND — the data must not be redistributed and models trained on it should not be presented as a commercial product
+- **Data licensing and public weights:** the DataCluster plate images are licensed CC BY-NC-ND — the data must not be redistributed. The model weights are public on the HuggingFace Hub for **research and portfolio use**; the plate detector was trained on that non-commercial data, so it should not be presented or used as a commercial product
 
 ---
 
@@ -841,6 +899,7 @@ This is a research prototype and says so plainly:
 - [ ] Overloading detection for trucks (schema and MV Act section already scaffolded)
 - [ ] Vahan integration and a mobile app for enforcement officers
 - [ ] PostgreSQL and multi-camera job scheduling
+- [ ] Host the full API with the models (needs ≥ 2 GB RAM) so the public demo can process videos
 
 ---
 
@@ -888,7 +947,7 @@ This is a research prototype and says so plainly:
 | 27 | AgriSense AI | AgriTech | EfficientNetB3 | Accuracy = 98.44% · Macro-F1 = 0.9843 · 38 classes |
 | 28 | AI Loan Underwriting Platform | BFSI / Fintech | XGBoost (credit + fraud) | Credit ROC-AUC = 0.858 · Fraud ROC-AUC = 0.955 · 242 tests |
 | 29 | CineMatch Pro | Entertainment / Media Tech | Hybrid SVD + TF-IDF + SBERT · CLIP · RoBERTa | RMSE = 0.8005 · Sentiment Acc = 94.26% · 56K posters |
-| 30 | **DriveGuard AI** | **Computer Vision / Smart Cities** | **YOLOv8m + DeepSORT + Gemini RAG** | **mAP@0.5 = 0.680 · 31 API routes · 336 tests** |
+| 30 | **DriveGuard AI** | **Computer Vision / Smart Cities** | **YOLOv8m + DeepSORT + Gemini RAG** | **mAP@0.5 = 0.680 · 31 API routes · 364 tests** |
 | 31 | MathVision AI | EdTech / Computer Vision | TrOCR-large + SymPy | CER = 0.138 · 350/350 symbolic solved |
 
 ---

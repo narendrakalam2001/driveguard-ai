@@ -5,6 +5,8 @@ whole path - speed, classification, de-duplicated logging, plate retries, vehicl
 checked end to end against a real (temporary) SQLite database.
 """
 
+import logging
+
 import numpy as np
 import pytest
 
@@ -495,9 +497,15 @@ def test_rejections_are_split_into_format_and_confidence_and_explained(square_ca
     plates.region, plates.confidence_threshold = "IN", 0.3
     service = _service(square_calibration, alerts, {}, plates)
     stats = _fresh_stats()
-    with caplog.at_level("INFO"):
-        for i in range(3):
-            service._maybe_read_plate(_track(100 + i * 40), stats, np.zeros((200, 400, 3), dtype=np.uint8), i * 100)
+    # get_logger() sets propagate=False, and pytest < 9 only attaches caplog to the root logger, so attach it explicitly
+    project_logger = logging.getLogger("services.detection_service")
+    project_logger.addHandler(caplog.handler)
+    try:
+        with caplog.at_level("INFO", logger="services.detection_service"):
+            for i in range(3):
+                service._maybe_read_plate(_track(100 + i * 40), stats, np.zeros((200, 400, 3), dtype=np.uint8), i * 100)
+    finally:
+        project_logger.removeHandler(caplog.handler)
     s = service.finalize()
     assert (s.plates_rejected_format, s.plates_rejected_confidence, s.plates_read) == (2, 1, 0)
     assert (s.plate_region, s.plate_min_confidence) == ("IN", 0.3)
